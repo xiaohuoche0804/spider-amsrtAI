@@ -1,0 +1,136 @@
+package com.tgmeng.common.mapper.mapstruct.topsearch;
+
+import com.tgmeng.common.util.StringUtil;
+import com.tgmeng.model.dto.topsearch.*;
+import com.tgmeng.model.vo.topsearch.TopSearchCommonVO;
+import org.mapstruct.*;
+
+import java.util.List;
+
+/**
+ * description: TopSearch的Mapper转换接口
+ * package: com.tgmeng.mapper.mapstruct.topsearch
+ * className: ITopSearchMapper
+ *
+ * @author tgmeng
+ * @version v1.0
+ * @since 2025/6/29 1:38
+*/
+
+
+@Mapper(componentModel = "spring")
+public interface ITopSearchCommonMapper {
+
+    /** 百度 */
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(source = "word", target = "keyword")
+    @Mapping(source = "hotScore", target = "hotScore",qualifiedByName = "stringToLong")
+    @Mapping(source = "url", target = "url")
+    @Mapping(source = "img", target = "image")
+    TopSearchCommonVO.DataInfo topSearchBaiDuDTOContentVO2TopSearchCommonVO(TopSearchBaiDuDTO.ContentVO topSearchBaiDuDTOcontentVO);
+
+    /** 哔哩哔哩 */
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(source = "title", target = "keyword")
+    @Mapping(source = "stat.view", target = "hotScore")
+    @Mapping(source = "short_link_v2", target = "url")
+    @Mapping(source = "pic", target = "image")
+    TopSearchCommonVO.DataInfo topSearchBilibiliDTODataVO2TopSearchCommonVO(TopSearchBilibiliDTO.DataVO topSearchBilibiliDTODataVO);
+
+    /** 微博 */
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(source = "note", target = "keyword")
+    @Mapping(source = "num", target = "hotScore")
+    @Mapping(source = "url", target = "url")
+    TopSearchCommonVO.DataInfo topSearchWeiBoDTODataVO2TopSearchCommonVO(TopSearchWeiBoDTO.DataVO topSearchWeiBoDTODataVO);
+
+    /** 抖音 */
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(source = "word", target = "keyword")
+    @Mapping(source = "hotValue", target = "hotScore")
+    TopSearchCommonVO.DataInfo topSearchDouYinDTODataVO2TopSearchCommonVO(TopSearchDouYinDTO.DataVO topSearchDouYinDTODataVO);
+    @AfterMapping
+    default void topSearchDouYinDTODataVO2TopSearchCommonVOAfter(TopSearchDouYinDTO.DataVO topSearchDouYinDTODataVO, @MappingTarget TopSearchCommonVO.DataInfo topSearchCommonVO) {
+        topSearchCommonVO.setUrl(StringUtil.douYinTopSearchItemUrlUtil(topSearchDouYinDTODataVO.getSentenceId(),topSearchDouYinDTODataVO.getWord()));
+    }
+
+
+    /** 豆瓣 */
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(source = "name", target = "keyword")
+    @Mapping(source = "score", target = "hotScore")
+    @Mapping(source = "uri", target = "url")
+    TopSearchCommonVO.DataInfo topSearchDouBanDTODataVO2TopSearchCommonVO(TopSearchDouBanDTO topSearchDouBanDTO);
+    @AfterMapping
+    default void topSearchDouBanDTODataInfo2TopSearchCommonVOAfter(TopSearchDouBanDTO topSearchDouBanDTO, @MappingTarget TopSearchCommonVO.DataInfo topSearchCommonVO) {
+        topSearchCommonVO.setUrl(topSearchDouBanDTO.getUri().replace("douban://douban.com/search/result?q=", "https://douban.com/search?q="));
+    }
+    /** 批量转换 */
+    List<TopSearchCommonVO.DataInfo> topSearchDouBanDTODataVO2TopSearchCommonVOS(List<TopSearchDouBanDTO> topSearchDouBanDTO);
+
+    /** 腾讯 */
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(source = "title", target = "keyword")
+    @Mapping(source = "readCount", target = "hotScore")
+    @Mapping(source = "url.", target = "url")
+    TopSearchCommonVO.DataInfo topSearchTencentDTOItemInfoTopSearchCommonVO(TopSearchTencentDTO.ItemInfo topSearchDTencentDTO);
+
+    /** 头条 */
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(source = "title", target = "keyword")
+    @Mapping(source = "hotValue", target = "hotScore")
+    @Mapping(source = "url.", target = "url")
+    TopSearchCommonVO.DataInfo topSearchTouTiaoDTOItemInfoTopSearchCommonVO(TopSearchTouTiaoDTO.ItemInfo topSearchTouTiaoDTO);
+
+    /** 网易 */
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(source = "title", target = "keyword")
+    @Mapping(source = "hotValue", target = "hotScore")
+    @Mapping(source = "contentId.", target = "url")
+    TopSearchCommonVO.DataInfo topSearchWangYiDTOItemInfoTopSearchCommonVO(TopSearchWangYiDTO.DataView topSearchWangYiDTO);
+    @AfterMapping
+    default void topSearchWangYiDTODataVO2TopSearchCommonVOAfter(TopSearchWangYiDTO.DataView topSearchWangYiDTO, @MappingTarget TopSearchCommonVO.DataInfo topSearchCommonVO) {
+        topSearchCommonVO.setUrl(StringUtil.wangYiTopSearchItemUrlUtil(topSearchWangYiDTO.getContentId()));
+    }
+
+    /** 网易云 */
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(source = "name", target = "keyword")
+    @Mapping(source = "popularity", target = "hotScore")
+    @Mapping(source = "id.", target = "url")
+    TopSearchCommonVO.DataInfo topSearchWangYiYunDTOItemInfoTopSearchCommonVO(TopSearchWangYiYunDTO.DataInfo topSearchWangYiYunDTO);
+    @AfterMapping
+    default void topSearchWangYiYunDTOItemInfoTopSearchCommonVOAfter(TopSearchWangYiYunDTO.DataInfo topSearchWangYiYunDTO, @MappingTarget TopSearchCommonVO.DataInfo topSearchCommonVO) {
+        topSearchCommonVO.setUrl(StringUtil.wangYiYunTopSearchItemUrlUtil(topSearchWangYiYunDTO.getId()));
+    }
+
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(source = "topicName", target = "keyword")
+    @Mapping(source = "discussNum", target = "hotScore")
+    @Mapping(source = "topicUrl.", target = "url")
+    TopSearchCommonVO.DataInfo topSearchBaiDuTieBaDTOItemInfoTopSearchCommonVO(TopSearchBaiDuTieBaDTO.DataInfo topSearchBaiDuTieBaDTO);
+
+
+    /** 少数派 */
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(source = "title", target = "keyword")
+    @Mapping(source = "commentCount", target = "hotScore")
+    @Mapping(source = "id.", target = "url")
+    TopSearchCommonVO.DataInfo topSearchShaoShuPaiDTOItemInfoTopSearchCommonVO(TopSearchShaoShuPaiDTO.ItemDTO shaoShuPaiDTO);
+    @AfterMapping
+    default void topSearchShaoShuPaiDTOItemInfoTopSearchCommonVOAfter(TopSearchShaoShuPaiDTO.ItemDTO topSearchShaoShuPaiItemDTO, @MappingTarget TopSearchCommonVO.DataInfo topSearchCommonVO) {
+        topSearchCommonVO.setUrl(StringUtil.shaoShuPaiTopSearchItemUrlUtil(topSearchShaoShuPaiItemDTO.getId()));
+        topSearchCommonVO.setHotScore(StringUtil.shaoShuPaiTopSearchItemHotScoreUtil(topSearchShaoShuPaiItemDTO));
+    }
+
+    @Named("stringToLong")
+    default Long stringToLong(String score) {
+        try {
+            return Long.parseLong(score);
+        } catch (Exception e) {
+            return 0L;
+        }
+    }
+
+
+}

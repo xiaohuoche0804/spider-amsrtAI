@@ -1,0 +1,34 @@
+spring:
+  application.name: tgmeng-api
+
+server:
+  port: 4399
+  servlet:
+    context-path: /api
+
+forest:
+  max-connections: 1000        # 连接池最大连接数
+  connect-timeout: 3000        # 连接超时时间，单位为毫秒
+  read-timeout: 3000           # 数据读取超时时间，单位为毫秒
+  log-enabled: false            # 打开或关闭日志（默认为 true）
+  log-request: false            # 打开/关闭Forest请求日志（默认为 true）
+  log-response-status: false    # 打开/关闭Forest响应状态日志（默认为 true）
+  auto-redirection: true # true 为开启，false 为关闭 # 全局自动重定向开关，默认为开启
+  max-retry-count: 1           # 请求失败后重试次数（默认为 0 次不重试）
+  interceptors:
+    - com.tgmeng.common.interceptor.MyHTTPInterceptor #全局http请求拦截器
+
+
+my-config:
+  proxy:
+    top-search:
+      enabled: false
+  schedule:
+    controller-api-schedule-rate: "0 0/1 * * * ?"  # 系统定时缓存所有数据的周期,这个和下面缓存过期时间配合使用
+  data-cache:
+    top-search:
+      enabled: true           #是否开启缓存，不开启的话，所有数据都是从接口获取，下面的其他这些配置就没用了
+      max-size: 1000         #最大缓存条数
+      expire-time: 60       # 通用缓存过期时间 单位是秒
+      expire-time-github-api-data: 1800  # GitHub缓存过期时间 单位是秒
+      expire-time-github-api-data-random-range: 600  # GitHub缓存过期时间的浮动值，比如上面设置的是30分钟，这里设置10分钟，那么缓存过期时间会在20-40分钟之间随机
